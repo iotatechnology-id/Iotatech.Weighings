@@ -47,11 +47,12 @@ public class Lm8MyPin
     public void Connect()
     {
         if (ModbusClient is ModbusTcpClient tcpClient)
-            tcpClient.Connect(AdapterIpAddress);
-        else if (ModbusClient is ModbusRtuClient rtuClient) rtuClient.Connect(SerialPortName);
+            tcpClient.Connect(AdapterIpAddress, ModbusEndianness.BigEndian);
+        else if (ModbusClient is ModbusRtuClient rtuClient)
+            rtuClient.Connect(SerialPortName, ModbusEndianness.BigEndian);
     }
 
-    private decimal RegisterToWeight(int[] weightRegisters)
+    private decimal RegisterToWeight(short[] weightRegisters)
     {
         var weight = (ushort) weightRegisters[0];
         var isNegative = Convert.ToBoolean(weight >> 15);
@@ -69,8 +70,8 @@ public class Lm8MyPin
     /// <returns>Current weight</returns>
     public async Task<decimal> GetWeightAsync(byte unitIdentifier)
     {
-        int[] weightRegisters = (await ModbusClient.ReadHoldingRegistersAsync<int>(unitIdentifier, 98, 2)).ToArray();
-        return RegisterToWeight(weightRegisters);
+        var weightRegisters = await ModbusClient.ReadHoldingRegistersAsync<short>(unitIdentifier, 98, 2);
+        return RegisterToWeight(weightRegisters.ToArray());
     }
 
     /// <summary>
@@ -80,7 +81,7 @@ public class Lm8MyPin
     /// <returns>Current weight</returns>
     public decimal GetWeight(byte unitIdentifier)
     {
-        int[] weightRegisters = ModbusClient.ReadHoldingRegisters<int>(unitIdentifier, 98, 2).ToArray();
-        return RegisterToWeight(weightRegisters);
+        var weightRegisters = ModbusClient.ReadHoldingRegisters<short>(unitIdentifier, 98, 2);
+        return RegisterToWeight(weightRegisters.ToArray());
     }
 }
