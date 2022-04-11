@@ -11,6 +11,8 @@
         <Version>1.0.0</Version>
         <Description>Collection of weighing module abstractions for .NET commonly used in Iotatechnology projects.</Description>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     </PropertyGroup>
 
     <ItemGroup>
